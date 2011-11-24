@@ -69,7 +69,7 @@ PSSwarmController {
 	actuallyPlayIndividual {|indDict|
 		//private.
 		q.push({
-			indDict.playSynth = indDict.phenotype.asSynth(
+			indDict.playNode = indDict.phenotype.asSynth(
 				out:indDict.playBus, group:playGroup
 			);
 			indDict.phenotype.clockOn;
@@ -81,8 +81,8 @@ PSSwarmController {
 		freed.isNil.not.if({
 			q.push({
 				//these should be separated, or the second eliminated by the first.
-				freed.phenotype.stop(freed.playSynth);//closes envelope
-				freed.playSynth.free;//forces synth to free
+				freed.phenotype.stop(freed.playNode);//closes envelope
+				freed.playNode.free;//forces synth to free
 			});
 		});
 		^freed;
@@ -98,7 +98,7 @@ PSListenSynthSwarmController : PSSwarmController {
 	var <fitnessPollInterval;
 	var <listenGroup;
 	var <worker;
-	classvar <listenSynth = \ps_listen_eight_hundred;
+	classvar <listenNode = \ps_listen_eight_hundred;
 	*new {|server, bus, numChannels=1, q, fitnessPollInterval=1|
 		^super.newCopyArgs(bus, numChannels, q).init(
 			server, fitnessPollInterval);
@@ -121,15 +121,15 @@ PSListenSynthSwarmController : PSSwarmController {
 	actuallyPlayIndividual {|indDict|
 		q.push({
 			//play the synth to which we wish to listen
-			indDict.playSynth = indDict.phenotype.asSynth(
+			indDict.playNode = indDict.phenotype.asSynth(
 				out:indDict.playBus, group:playGroup);
 			//analyse its output by listening to its bus
-			indDict.listenSynth = Synth(this.class.listenSynth,
+			indDict.listenNode = Synth(this.class.listenNode,
 				this.getListenSynthArgs(indDict),
 				listenGroup);
 			indDict.phenotype.clockOn;
 			//re-route some output to the master input
-			indDict.jackSynth = Synth(PSMCCore.n(numChannels),
+			indDict.jackNode = Synth(PSMCCore.n(numChannels),
 				[\in, indDict.playBus, \out, outBus],
 				listenGroup);
 		});
@@ -145,8 +145,8 @@ PSListenSynthSwarmController : PSSwarmController {
 			q.push({
 				freed.playBus.free;
 				freed.listenBus.free;
-				freed.listenSynth.free;
-				freed.jackSynth.free;
+				freed.listenNode.free;
+				freed.jackNode.free;
 			});
 		});
 		^freed;
