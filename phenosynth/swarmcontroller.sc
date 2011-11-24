@@ -3,7 +3,7 @@
 //How the controller works, nuts-and-bolts
 s=Server.default;
 ~globalOuts = Bus.new(\audio, 0, 2);
-~control = PSListenSynthSwarmController.new(s, ~globalOuts);
+~control = PSSwarmController.new(s, ~globalOuts);
 ~ind = PSSynthDefPhenotype.newRandom;
 ~control.playIndividual(~ind);
 ~control.freeIndividual(~ind);
@@ -91,7 +91,22 @@ PSSwarmController {
 		all.do({|i| this.freeIndividual(i.phenotype);});
 	}
 }
-
+/*
+(
+//How the listening controller works, nuts-and-bolts
+s=Server.default;
+~globalOuts = Bus.new(\audio, 0, 2);
+~control = PSListenSynthSwarmController.new(s, ~globalOuts);
+~ind = PSSynthDefPhenotype.newRandom;
+~control.playIndividual(~ind);
+~control.freeIndividual(~ind);
+~ind.mappedArgs
+~ind.identityHash;
+~ind.chromosome;
+10.do({~control.playIndividual(PSSynthDefPhenotype.newRandom)});
+~control.all.do({|a,b,c| [a,b,c].postln;});
+)
+*/
 PSListenSynthSwarmController : PSSwarmController {
 	/* Handle a number of simultaneous synths being digitally listened to
 	*/
