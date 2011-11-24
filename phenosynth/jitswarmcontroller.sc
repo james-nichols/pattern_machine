@@ -46,7 +46,7 @@ PSJitSwarmController {
 		var indDict;
 		indDict = (\phenotype: phenotype);
 		all.put(indDict.phenotype.identityHash, indDict);
-		indDict.playNode = NodeProxy.new(server, audio, numChannels);
+		indDict.playNode = NodeProxy.new(server, numChannels);
 		this.decorateIndividualDict(indDict);
 		this.loadIndividualDict(
 			indDict
@@ -68,9 +68,12 @@ PSJitSwarmController {
 	}
 	freeIndividual {|phenotype|
 		var freed;
-		//these should be separated, or the second eliminated by the first.
-		freed.phenotype.stop(freed.playNode);//closes envelope
-		freed.playNode.free;//forces synth to free
+		freed = all.removeAt(phenotype.identityHash);
+		freed.isNil.not.if({
+			//these should be separated, or the second eliminated by the first.
+			freed.phenotype.stop(freed.playNode);//closes envelope
+			freed.playNode.free;//forces synth to free
+		});
 		^freed;
 	}
 	free {
