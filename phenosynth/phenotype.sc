@@ -76,6 +76,7 @@ PSSynthDefPhenotype : PSPhenotype {
 		)
 		^synth;
 	}
+	asSynthName { ^this.class.synthdef ; }
 	stop {|synth|
 		synth.set(\gate, 0);
 	}
