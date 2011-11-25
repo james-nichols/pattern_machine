@@ -3,7 +3,7 @@
 //How the controller works, nuts-and-bolts
 s=Server.default;
 ~globalOuts = Bus.new(\audio, 0, 2);
-~control = PSJitSwarmController.new(s, ~globalOuts);
+~control = PSSwarmController.new(s, ~globalOuts);
 ~ind = PSSynthDefPhenotype.newRandom;
 ~control.playIndividual(~ind);
 ~control.freeIndividual(~ind);
@@ -14,7 +14,7 @@ s=Server.default;
 ~control.all.do({|a,b,c| [a,b,c].postln;});
 )
 */
-PSJitSwarmController {
+PSSwarmController {
 	/*pass all server instructions through this guy to allow the instructions
 	to be delivered in the right order and the boring bus/server allocation
 	details to be abstracted away, and to track resources needing freeing.*/
@@ -46,7 +46,6 @@ PSJitSwarmController {
 		var indDict;
 		indDict = (\phenotype: phenotype);
 		all.put(indDict.phenotype.identityHash, indDict);
-		indDict.playNode = NodeProxy.new(server, numChannels);
 		this.decorateIndividualDict(indDict);
 		this.loadIndividualDict(
 			indDict
@@ -85,7 +84,7 @@ PSJitSwarmController {
 //How the listening controller works, nuts-and-bolts
 s=Server.default;
 ~globalOuts = Bus.new(\audio, 0, 2);
-~control = PSListenSynthJitSwarmController.new(s, ~globalOuts);
+~control = PSListenSynthSwarmController.new(s, ~globalOuts);
 ~ind = PSSynthDefPhenotype.newRandom;
 ~control.playIndividual(~ind);
 ~control.freeIndividual(~ind);
@@ -96,7 +95,7 @@ s=Server.default;
 ~control.all.do({|a,b,c| [a,b,c].postln;});
 )
 */
-PSListenSynthJitSwarmController : PSJitSwarmController {
+PSListenSynthSwarmController : PSSwarmController {
 	/* Handle a number of simultaneous synths being digitally listened to
 	*/
 	var <fitnessPollInterval;
@@ -140,7 +139,7 @@ PSListenSynthJitSwarmController : PSJitSwarmController {
 		^listenArgs;
 	}
 	freeIndividual {|phenotype|
-		var freed = super.freeIndividual(phenotype);		
+		var freed = super.freeIndividual(phenotype);
 		freed.isNil.not.if({
 			freed.playBus.free;
 			freed.listenBus.free;

@@ -2,7 +2,7 @@
 //How the controller works, nuts-and-bolts
 s=Server.default;
 ~globalOuts = Bus.new(\audio, 0, 2);
-~control = PSJitSwarmController.new(s, ~globalOuts);
+~control = PSSwarmController.new(s, ~globalOuts);
 ~ind = PSSynthDefPhenotype.newRandom;
 ~control.playIndividual(~ind);
 ~control.freeIndividual(~ind);
@@ -10,7 +10,25 @@ s=Server.default;
 ~ind.identityHash;
 ~ind.chromosome;
 10.do({~control.playIndividual(PSSynthDefPhenotype.newRandom)});
-~control.all.do({|a,b,c| [a,b,c].postln;});
+~control.all.collect({|key, indDict| indDict.postln});
+)
+(
+//How the listening controller works, nuts-and-bolts
+s=Server.default;
+~globalOuts = Bus.new(\audio, 0, 2);
+~control = PSListenSynthSwarmController.new(s, ~globalOuts);
+~ind = PSSynthDefPhenotype.newRandom;
+~control.playIndividual(~ind);
+~control.freeIndividual(~ind);
+~ind.mappedArgs
+~ind.identityHash;
+~ind.chromosome;
+10.do({~control.playIndividual(PSSynthDefPhenotype.newRandom)});
+~control.all.do({|a,b| [a,b].postln;});
+~control.updateFitnesses;
+~control.all.collect({|indDict, key| [indDict, key]});
+~control.all.values.collect({|indDict| indDict.phenotype.fitness});
+~control.free;
 )
 (
 //initialisation
