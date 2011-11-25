@@ -97,10 +97,14 @@ TODO:
 
 * right now this doesn't especially converge to 800 Hz, even over large
   timescales
+
+  * tr that newfangled averaging crossover
+  
 * In fact, now, it just explodes and causes ear damage. Did i break something
   recently? It used to be somewhat functional.
 
 * infrastructure
+
 	* ensure Groups are also freed.
 	* allow a seed-bank supporting far more genomes than can be simultaneously
 		simulated. (I.e. keep a much larger population, but only simulate a part
@@ -134,9 +138,7 @@ TODO:
 		* provide a way to unwarp as well as warp chromosomes
 		* go to all-binary chromosomes for increased happiness and elegance.
 		
-	* handle zero-fitness populations in the parent and death selector
 	* provide a "migration phase" in which to check for extinction and restock.
-	* switch to jitlib
 
 * Give the faintest of indications that I do care about tests
 * my earswarm
