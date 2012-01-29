@@ -48,6 +48,8 @@ PSIsland {
 	var <fitnessEvaluator;
 	var <terminationCondition;
 
+	var <>log;
+	
 	// default values for that parameter thing
 	// I wish I could do this with a literal instead of a method
 	// because overriding is way awkward this way.
@@ -95,7 +97,8 @@ PSIsland {
 	}
 	init {
 		this.initOperators;
-		population = List.new;
+		population = LinkedList.new;
+		this.log = NullLogger.new;
 	}
 	initOperators {
 		this.deathSelector = this.class.defaultDeathSelector;
@@ -177,14 +180,20 @@ PSIsland {
 		// incrementally, that's your bag.
 		var toCull, toBreed;
 		var beforeFitness, afterFitness;
+		log.logFlush(nil, \preevaluate, iterations);
 		this.evaluate;
+		log.logFlush(nil, \postevaluate, iterations);
 		toCull = deathSelector.value(params, population);
-		//[\culling, toCull].postln;
+		log.logFlush(nil, \postdeath, iterations);
+		//beforeFitness = population.collect(_.fitness).mean;
 		this.cull(toCull);
+		log.logFlush(nil, \prebreedchoice, iterations);
 		//afterFitness = population.collect(_.fitness).mean;
 		//[\fitness_delta, afterFitness - beforeFitness].postln;
 		toBreed = birthSelector.value(params, population);
+		log.logFlush(nil, \prebreed, iterations);
 		this.breed(toBreed);
+		log.logFlush(nil, \postbreed, iterations);
 		iterations = iterations + 1;
 	}
 	fitnesses {
@@ -203,6 +212,7 @@ PSIsland {
 				);
 			});*/
 			//action happens in iterator
+			log.logFlush(nil, \iteratedagain);
 		};
 	}
 	free {
@@ -212,19 +222,28 @@ PSIsland {
 		/* Return a routine that does the work of triggering the work we want as
 			long as things are supposed to be moving along. */
 		^Routine.new({while(
+			log.logFlush(nil, \loggin);
 			{
+				log.logFlush(nil, \iteratin, params, iterations, playing);
+				log.logFlush(nil, \terminyet, terminationCondition.value(
+					params, population, iterations
+				));
 				(terminationCondition.value(
 					params, population, iterations
 				).not) && 
 				playing 
 			},
 			{
+				log.logFlush(nil, \pretend, iterations);
 				this.tend;
+				log.logFlush(nil, \posttend, iterations);
 				[\iterations, iterations, this.fitnesses.mean].postln;
-				((iterations % 100) == 0).if({1.wait;});
+				log.logFlush(nil, \yieldy, iterations);
+				//((iterations % 100) == 0).if({1.wait;});
 				true.yield;
 			};
 		);
+		log.logFlush(nil, \donenow, iterations);
 		false.yield;}, stackSize: 16384);//seems to overflow easily?
 	}
 	reset {
