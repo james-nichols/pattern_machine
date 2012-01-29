@@ -1,4 +1,41 @@
 (
+//this NEEDS to log to a file. displaying to the GUI is hopelessly stupid.
+~island = PSIsland.new;
+//~island.log = LogFile.global;
+~island.play;
+~island.reset;
+~island.fitnesses;
+~island.population;
+~w=~island.population.select({|i, idx| var hm; hm = (i.class!=PSPhenotype); hm.if(idx.postln); hm;});
+~wIdx=~island.population.detectIndex({|i, idx| i.class!=PSPhenotype;});
+~w=~island.population[~wIdx];
+~w.class;
+~w.asCompileString;
+
+~island.population[98]
+~island.population[0].class.name;
+~island.population.collect({|i| i.class.name});
+~island.params;
+//~island.params.stopIterations=1;
+~island.fitnessEvaluator.asCompileString;
+~island.fitnessEvaluator.def.sourceCode;
+~island.fitnessEvaluator.def.argNames;
+~island.fitnessEvaluator.def.context;
+~fe=Library.at(\phenosynth, \fitness_evals, \chromosomemean);
+~fe.asCompileString;
+~fe.argNames;
+~fe.def.context;
+~tc=Library.at(\phenosynth, \termination_conds, \basic);
+~tc.asCompileString;
+~tc.argNames;
+~tc.def.context;
+~island.populate;
+~island.population;
+~island.fitnessEvaluator.value(~island.params, ~island.population[0]);
+~island.play;
+~island.reset;
+)
+(
 //initialisation
 Server.default = s = Server.internal;
 //Server.default = s = Server.local;
@@ -143,13 +180,6 @@ James Nichols for the peer pressure to do it.
 /**************************
  * Debugging bits
  **************************/
-(
-//this NEEDS to log to a file. displaying to the GUI is hopelessly stupid.
-~island = PSIsland.new;
-~island.params;
-~island.params.stopIterations=1;
-~island.play;
-)
 (
 //How the listening controller works, nuts-and-bolts
 s=Server.default;
