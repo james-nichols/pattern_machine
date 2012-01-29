@@ -97,7 +97,7 @@ PSIsland {
 	}
 	init {
 		this.initOperators;
-		population = List.new;
+		population = LinkedList.new;
 		this.log = NullLogger.new;
 	}
 	initOperators {
